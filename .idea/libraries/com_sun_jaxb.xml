@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="com.sun.jaxb">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/com.sun.jaxb.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

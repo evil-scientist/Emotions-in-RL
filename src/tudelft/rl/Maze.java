@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
+import com.sun.xml.bind.v2.schemagen.xmlschema.List; //internal.
 
 public class Maze {
 	private Action[] actions;

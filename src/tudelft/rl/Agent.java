@@ -33,6 +33,7 @@ public class Agent {
 		System.out.println(nrOfActionsSinceReset);
 		x=startX;
 		y=startY;
+
 		nrOfActionsSinceReset=0;
 	}
 }
