@@ -1,7 +1,8 @@
 <component name="libraryTable">
-  <library name="com.sun.jaxb">
+  <library name="SSP-Group-ERL_B-">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/com.sun.jaxb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/com.sun.jaxb.jar.zip!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

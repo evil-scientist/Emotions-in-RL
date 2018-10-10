@@ -1,13 +1,9 @@
-package tudelft.rl.joost;
+package tudelft.rl.ERL_B;
 
-import tudelft.rl.Softmax;
+import tudelft.rl.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import tudelft.rl.Action;
-import tudelft.rl.Agent;
-import tudelft.rl.Maze;
-import tudelft.rl.Tradeoff;
-import tudelft.rl.QLearning;
 
 public class MySoftmax extends Softmax {
     //@Override
