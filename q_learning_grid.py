@@ -77,13 +77,14 @@ class Field(object):
 class QLearning(object):
         """ class for Q Learning """
 
-        def __init__(self, map_obj):
+        def __init__(self, map):
                 self.Qvalue = {}
-                self.Field = map_obj
+                self.map = map
+                self.state = self.map.startTuple()
 
         def learn(self, beta, greedy_flg=False):
 
-                state = self.Field.start_point
+                state = self.map.startTuple
                 print("----- Episode -----")
                 while True:
                         if greedy_flg:
@@ -100,17 +101,28 @@ class QLearning(object):
                         else:
                                 state = action # continue
 
+        def onestep(self, beta):
+
+                action = self.choose_action_trade_off(self.state, beta)
+
+                #beta = self.emotion_detection(beta)
+
+                finish_flg = self.update_Qvalue(self.state, action)
+                self.state = action  # continue
+
+                return finish_flg
+
         def emotion_detection(self,beta):
             a = input("Input emotion value:")
             return int(a) + beta
 
 
         def update_Qvalue(self, state, action):
-
                 #       Q(s, a) <- Q(s, a) + alpha * {r(s, a) + gamma max{Q(s`, a`)} -  Q(s,a)}
                 Q_s_a = self.get_Qvalue(state, action)
-                mQ_s_a = max([self.get_Qvalue(action, n_action) for n_action in self.Field.get_actions(action)])
-                r_s_a, finish_flg = self.Field.get_val(action)
+                mQ_s_a = max([self.get_Qvalue(action, n_action) for n_action in self.map.getPossibleActions(action)])
+                r_s_a = self.map.tileAt(action[0], action[1]).reward()
+                finish_flg = self.map.tileAt(action[0], action[1]).isEndPoint()
                 # calculate
                 q_value = Q_s_a + ALPHA * ( r_s_a +  GAMMA * mQ_s_a - Q_s_a)
                 # update
@@ -153,12 +165,12 @@ class QLearning(object):
                 max_q_value = -1
                 pro_sum = 0
 
-                for s in self.Field.get_actions(state):
+                for s in self.map.getPossibleActions(state):
                     q_value = self.get_Qvalue(state, s)
                     pro_sum = pro_sum + math.exp(q_value)
 
                 max_pro = 0
-                for a in self.Field.get_actions(state):
+                for a in self.map.getPossibleActions(state):
                         q_value = self.get_Qvalue(state, a)
                         softmax = math.exp(beta * q_value) / pro_sum
                         if softmax > max_pro:

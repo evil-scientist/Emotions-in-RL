@@ -66,6 +66,21 @@ class Map:
                     return (x,y)
         raise InvalidMapFileException("Map does not have a starting point")
 
+    def getPossibleActions(self, state):
+        x, y = state
+        if not self.tileAt(x,y).isAccessible():
+            raise InvalidLocationException("Location: (" + x + "," + y + ") is not accessible")
+        around_map = [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
+        actions = []
+        for point in around_map:
+            if self.tileAt(point[0], point[1]).isAccessible():
+                actions.append(point)
+
+        return actions
+
 
 class InvalidMapFileException(Exception):
+    pass
+
+class InvalidLocationException(Exception):
     pass

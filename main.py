@@ -1,24 +1,26 @@
 from Map import Map
 from Map import Bot
 from UI import Canvas
-from ReinforcementLearning.devsample import map_boltzmann_q_learning as qlearning
 import tkinter as tk
+import q_learning_grid as qlearning
 import time
 
 print("start")
 
-updateperiod = 50
+updateperiod = 1000
 
 root = tk.Tk()
 map = Map.Map()
 map.parse("testmap.txt")
-state_key = map.startTuple()
-bot = Bot.Bot(state_key[0],state_key[1])
+qlearning = qlearning.QLearning(map)
+bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
 env = Canvas.Canvas(root, map, bot)
 print("after init of own")
-qlearning = qlearning.MapBoltzmannQLearning()
-qlearning.initialize(map)
+
 print("after init of qlearning")
+
+LEARNING_COUNT = 200
+CURRENT_COUNT = 0
 
 env.redraw()
 print("before sleep")
@@ -26,23 +28,19 @@ print("before sleep")
 print("after sleep")
 
 
-alpha_value = 0.1
-
-gamma_value = 0.1
-
-greedy_rate = 0.1
-
-qlearning.epsilon_greedy_rate = greedy_rate
-qlearning.alpha_value = alpha_value
-qlearning.gamma_value = gamma_value
-
 
 def update():
-    global state_key, waitperiod
-    print("----update----")
-    print("state_key: " + str(state_key))
-    state_key = qlearning.onestep(state_key)
-    bot.update(state_key[0], state_key[1])
+    global LEARNING_COUNT, CURRENT_COUNT
+    if(CURRENT_COUNT < LEARNING_COUNT):
+        beta = 3 + (CURRENT_COUNT / 200) * (6 - 3)
+        finish_flg = qlearning.onestep(beta)  # Learning 1 episode
+
+    if finish_flg:
+        print("Completed one run: " + str(CURRENT_COUNT))
+        CURRENT_COUNT = CURRENT_COUNT + 1
+        qlearning.state = map.startTuple()
+
+    bot.update(qlearning.state[0], qlearning.state[1])
     env.redraw()
     root.after(updateperiod, update)
 
