@@ -18,8 +18,12 @@ def update(data):
     global LEARNING_COUNT, CURRENT_COUNT
     if(CURRENT_COUNT < LEARNING_COUNT):
         #beta = 3 + (CURRENT_COUNT / 200) * (6 - 3)
+<<<<<<< HEAD
         d = data[:2]
         finish_flg = qlearning.onestep(int(d))  # Learning 1 episode
+=======
+        finish_flg = qlearning.onestep(data/50)  # Learning 1 episode
+>>>>>>> 73550755ff84e54406f2a3694acd1e51f8366ec9
 
     if finish_flg:
         print("Completed one run: " + str(CURRENT_COUNT))
