@@ -52,7 +52,7 @@ class Field(object):
 
         def get_actions(self, point):
                 x, y = point
-                if self.field_data[y][x] == "#": sys.exit("Field.get_actions() ERROR: 壁を指定している.(x, y)=(%d, %d)" % (x, y))
+                if self.field_data[y][x] == "#": sys.exit("Field.get_actions() ERROR: (x, y)=(%d, %d)" % (x, y))
                 around_map = [(x, y-1), (x, y+1), (x-1 , y), (x+1, y)]
                 return [(_x, _y) for _x, _y in around_map if self.field_data[_y][_x] != "#"]
 
@@ -64,14 +64,14 @@ class Field(object):
                          else: return v, True
                 except ValueError:
                         if self.field_data[y][x] == "S": return 0.0, False
-                        sys.exit("Field.get_val() ERROR: 壁を指定している.(x, y)=(%d, %d)" % (x, y))
+                        sys.exit("Field.get_val() ERROR: (x, y)=(%d, %d)" % (x, y))
 
         def get_start_point(self):
                 for y, line in enumerate(self.field_data):
                         for x, v in enumerate(line):
                                 if v == "S":
                                         return (x, y)
-                sys.exit("Field.set_start_point() ERROR: FieldにStart地点がありません.")
+                sys.exit("Field.set_start_point() ERROR: .")
 
 
 class QLearning(object):

@@ -4,8 +4,30 @@ from UI import Canvas
 import tkinter as tk
 import q_learning_grid as qlearning
 import time
+import socket
+#from util import check_exit, encrypt, decrypt
+import sys
+
+
+HOST = '0.0.0.0'
+PORT = 4000
 
 print("start")
+
+def update(data):
+    global LEARNING_COUNT, CURRENT_COUNT
+    if(CURRENT_COUNT < LEARNING_COUNT):
+        #beta = 3 + (CURRENT_COUNT / 200) * (6 - 3)
+        finish_flg = qlearning.onestep(data)  # Learning 1 episode
+
+    if finish_flg:
+        print("Completed one run: " + str(CURRENT_COUNT))
+        CURRENT_COUNT = CURRENT_COUNT + 1
+        qlearning.state = map.startTuple()
+
+    bot.update(qlearning.state[0], qlearning.state[1])
+    env.redraw()
+    root.after(updateperiod, update)
 
 updateperiod = 1000
 
@@ -29,21 +51,21 @@ print("after sleep")
 
 
 
-def update():
-    global LEARNING_COUNT, CURRENT_COUNT
-    if(CURRENT_COUNT < LEARNING_COUNT):
-        beta = 3 + (CURRENT_COUNT / 200) * (6 - 3)
-        finish_flg = qlearning.onestep(beta)  # Learning 1 episode
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect((HOST, PORT))
+    print("Socket Connected.")
+    print("Enter # to disconnect....")
+    while (1):
+        print("Client:")
+        #d = str.encode(input())
+        # #s.sendall(d)#s.sendall(encrypt(d))
+        #  check_exit(d)
+        data = s.recv(1024)#data = decrypt(s.recv(1024))
+        update(data)
+        print("Server:", data)
 
-    if finish_flg:
-        print("Completed one run: " + str(CURRENT_COUNT))
-        CURRENT_COUNT = CURRENT_COUNT + 1
-        qlearning.state = map.startTuple()
+		#check_exit(data)
 
-    bot.update(qlearning.state[0], qlearning.state[1])
-    env.redraw()
-    root.after(updateperiod, update)
-
-update()
+#update()
 root.mainloop()
 print("after mainloop")
