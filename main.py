@@ -19,7 +19,8 @@ def update(data):
     if(CURRENT_COUNT < LEARNING_COUNT):
         #beta = 3 + (CURRENT_COUNT / 200) * (6 - 3)
         d = data[:2]
-        finish_flg = qlearning.onestep(int(d))  # Learning 1 episode
+        print(d)
+        finish_flg = qlearning.onestep(int(float(d)))  # Learning 1 episode
         #finish_flg = qlearning.onestep(data/50)  # Learning 1 episode
 
     if finish_flg:
