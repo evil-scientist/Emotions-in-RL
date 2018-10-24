@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  affectiva_mod_container:
+    build: .
+    ports:
+      - "4000:80"
+    volumes: 
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    privileged: true
+    environment:
+      - DISPLAY=:0
