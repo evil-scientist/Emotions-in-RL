@@ -57,7 +57,7 @@ def update():
 
 root = tk.Tk()
 map = Map.Map()
-map.parse("testmap.txt")
+map.parse("testmap_bug.txt")
 qlearning = qlearning.QLearning(map)
 bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
 env = Canvas.Canvas(root, map, bot)
