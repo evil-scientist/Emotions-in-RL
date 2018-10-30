@@ -9,11 +9,12 @@ import struct
 import socket
 #from util import check_exit, encrypt, decrypt
 import sys
+from scipy.interpolate import interp1d
 
 
 HOST = '0.0.0.0'
 PORT = 4000
-updateperiod = 350
+updateperiod = 500
 
 
 LEARNING_COUNT = 50
@@ -21,20 +22,22 @@ CURRENT_COUNT = 0
 STEP_COUNT = 0
 FLAG_social = True
 
-def call_valence(s,current_count):
+def call_valence(s):
+
     data = s.recv(1024)#data = decrypt(s.recv(1024))
+    a = interp1d([-100,100],[3,6])
     try:
-        print("Server:", (int(float(str(data)[2:8]))/200+1)*3)
+        print("beta:", float(a(float(str(data)[2:8])))
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
         VALENCE = int(float(str(data)[2:8]))
         return VALENCE
     except:
         return 3
 
-def update(s):
-    global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE
+def update():
+    global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE,s
     if(CURRENT_COUNT < LEARNING_COUNT):
-        VALENCE = call_valence(s,CURRENT_COUNT)
+        VALENCE = call_valence(s)
         beta = VALENCE
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
@@ -80,10 +83,9 @@ print("after init of qlearning")
 
 
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
-if FLAG_social:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
-        env.redraw()
-        update(s)
-        root.mainloop()
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((HOST, PORT))
+env.redraw()
+update()
+root.mainloop()
 

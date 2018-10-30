@@ -13,7 +13,7 @@ import sys
 
 HOST = '0.0.0.0'
 PORT = 4000
-updateperiod = 350
+updateperiod = 500
 
 
 LEARNING_COUNT = 50
