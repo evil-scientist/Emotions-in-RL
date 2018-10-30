@@ -37,7 +37,7 @@ def update(data):
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
         d = data
-        print(type(data))
+        #print(type(data))
         #finish_flg = qlearning.onestep(struct.unpack(">L", data)[0]))  # Learning 1 episode
         finish_flg = qlearning.onestep(int(float(str(data)[2:8]))/10)  # Learning 1 episode        
 	#finish_flg = qlearning.onestep(data/50)  # Learning 1 episode
