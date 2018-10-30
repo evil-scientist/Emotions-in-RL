@@ -21,10 +21,10 @@ CURRENT_COUNT = 0
 STEP_COUNT = 0
 FLAG_social = True
 
-def call_valence(s):
+def call_valence(s,current_count):
     data = s.recv(1024)#data = decrypt(s.recv(1024))
     try:
-        print("Server:", (int(float(str(data)[2:8]))/200)*3+1)
+        print("Server:", (int(float(str(data)[2:8]))/200+1)*3)
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
         VALENCE = int(float(str(data)[2:8]))
         return VALENCE
@@ -34,7 +34,7 @@ def call_valence(s):
 def update(s):
     global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE
     if(CURRENT_COUNT < LEARNING_COUNT):
-        beta = call_valence(s)
+        beta = call_valence(s,CURRENT_COUNT)
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
         #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
