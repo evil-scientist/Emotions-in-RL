@@ -2,7 +2,7 @@ from Map import Map
 from Map import Bot
 from UI import Canvas
 import tkinter as tk
-import q_learning_grid as qlearning
+import q_learning_grid as ql
 import os.path
 import time
 import struct
@@ -10,15 +10,24 @@ import socket
 #from util import check_exit, encrypt, decrypt
 import sys
 
+from statistics import mean
 
+sys.setrecursionlimit(10000)
 HOST = '0.0.0.0'
 PORT = 4000
 updateperiod = 350
 
 
-LEARNING_COUNT = 10
+LEARNING_COUNT = 15
 CURRENT_COUNT = 0
 STEP_COUNT = 0
+CURRENT_RUN = 0 #current run for the averages
+TOTAL_RUNS = 1000 #total number of runs to take the average over
+
+results = {}
+for i in range(LEARNING_COUNT):
+    results[i] = []
+
 if(not os.path.isdir("./logs/")):
     os.mkdir("./logs/")
 filename = "./logs/log_nonsocial1.txt"
@@ -28,40 +37,36 @@ while(os.path.isfile(filename)):
     filename = "./logs/log_nonsocial" + str(i) + ".txt"
 log = open(filename, "w+")
 
-print("start")
-
-def update():
-    global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT
-    if(CURRENT_COUNT < LEARNING_COUNT):
-        beta = 3 + (CURRENT_COUNT / LEARNING_COUNT) * (6 - 3)
-        towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
-        log.write(towrite)
-        finish_flg = qlearning.onestep(beta)  # Taking one step (one action for the bot)
-        STEP_COUNT = STEP_COUNT + 1
-
-    if finish_flg: #in this case we reached the goal in the last step, so go back to start
-        print("Completed one run: " + str(CURRENT_COUNT))
-        CURRENT_COUNT = CURRENT_COUNT + 1
-        STEP_COUNT = 0
-        qlearning.state = map.startTuple()
-
-    bot.update(qlearning.state[0], qlearning.state[1]) #update the position of the bot on the UI
-    env.redraw() #redraw the UI with the new state
-    if(CURRENT_COUNT < LEARNING_COUNT):
-        root.after(updateperiod, update) #after updateperiod take another step and update the uid again
-    else:
-        log.close()
-
-
-root = tk.Tk()
 map = Map.Map()
 map.parse("testmap.txt")
-qlearning = qlearning.QLearning(map)
-bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
-env = Canvas.Canvas(root, map, bot)
+qlearning = ql.QLearning(map)
+finish_flg = False
 
-env.redraw()
+while(CURRENT_RUN < TOTAL_RUNS):
+    while(CURRENT_COUNT < LEARNING_COUNT):
+        while(not finish_flg):
 
-update()
-root.mainloop()
-print("after mainloop")
+            beta = 3 + (CURRENT_COUNT / LEARNING_COUNT) * (6 - 3)
+            finish_flg = qlearning.onestep(
+                beta)  # Taking one step (one action for the bot)
+            STEP_COUNT = STEP_COUNT + 1
+
+        results[CURRENT_COUNT].append(STEP_COUNT)
+        CURRENT_COUNT = CURRENT_COUNT + 1
+        temp_count = STEP_COUNT
+        STEP_COUNT = 0
+        qlearning.state = map.startTuple()
+        finish_flg = False
+
+    print("Run: " + str(CURRENT_RUN) + "Iterartion: " + str(
+        CURRENT_COUNT) + " STEP: " + str(temp_count))
+    CURRENT_COUNT = 0
+    CURRENT_RUN = CURRENT_RUN + 1
+    qlearning = ql.QLearning(map)
+
+for count in results.keys():
+    towrite = (str(count) + str(", {0}") +  str("\n")).format(mean(results[count]))
+    log.write(towrite)
+
+log.close()
+
