@@ -38,8 +38,8 @@ def update(data):
         log.write(towrite)
         d = data
         #print(type(data))
-        #finish_flg = qlearning.onestep(struct.unpack(">L", data)[0]))  # Taking one step (one action for the bot)
-        finish_flg = qlearning.onestep(int(float(str(data)[2:8]))/10)  # Taking one step (one action for the bot)
+        finish_flg = qlearning.onestep(beta)  # Taking one step (one action for the bot)
+        #finish_flg = qlearning.onestep(int(float(str(data)[2:8]))/10)  # Taking one step (one action for the bot)
 	    #finish_flg = qlearning.onestep(data/50)
         STEP_COUNT = STEP_COUNT + 1
 
