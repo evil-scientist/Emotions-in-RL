@@ -19,7 +19,7 @@ updateperiod = 350
 LEARNING_COUNT = 50
 CURRENT_COUNT = 0
 STEP_COUNT = 0
-FLAG_social = false
+FLAG_social = False
 
 def call_valence(s):
     data = s.recv(1024)#data = decrypt(s.recv(1024))
@@ -81,8 +81,8 @@ if FLAG_social:
 else:
     flag = 'normal'
 
-if(not os.path.isdir("./logs/")):
-    os.mkdir("./logs/")
+if(not os.path.isdir("./logs/"+flag)):
+    os.mkdir("./logs/"+flag)
 filename = "./logs/"+flag+"/log1.txt"
 i = 1
 while(os.path.isfile(filename)):
@@ -101,14 +101,12 @@ print("after init of qlearning")
 
 
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
-if FLAG_social:
-    env.redraw()
-    update()
-else:
+if FLAG_social
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        
         s.connect((HOST, PORT))
         env.redraw()
         update(s)
         root.mainloop()
- 
+else:
+    env.redraw()
+    update()
