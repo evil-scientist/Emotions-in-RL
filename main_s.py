@@ -27,16 +27,17 @@ def call_valence(s):
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
         VALENCE = int(float(str(data)[2:8]))
         return VALENCE
-    except:return 3
+    except:return 0
 
-def update(s):
+def update():
     global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE
     if(CURRENT_COUNT < LEARNING_COUNT):
-        beta = call_valence(s)
+        beta = 3 + (CURRENT_COUNT / LEARNING_COUNT) * (6 - 3)
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
+        # Learning 1 episode
         #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
-        finish_flg = qlearning.onestep(beta) # Learning 1 episode        
+	#finish_flg = qlearning.onestep(data/50)  # Learning 1 episode
         STEP_COUNT = STEP_COUNT + 1
 
     if finish_flg:
@@ -61,6 +62,7 @@ while(os.path.isfile(filename)):
     filename = "./logs/log" + str(i) + ".txt"
 log = open(filename, "w+")
 
+
 root = tk.Tk()
 map = Map.Map()
 map.parse("testmap.txt")
@@ -70,28 +72,24 @@ env = Canvas.Canvas(root, map, bot)
 print("after init of own")
 print("after init of qlearning")
 
-
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    if(not os.path.isdir("./logs/")):
-        os.mkdir("./logs/")
-    filename = "./logs/log1.txt"
-    i = 1
-    while(os.path.isfile(filename)):
-        i = i + 1
-        filename = "./logs/log" + str(i) + ".txt"
-    log = open(filename, "w+")
 
-    root = tk.Tk()
-    map = Map.Map()
-    map.parse("testmap.txt")
-    qlearning = qlearning.QLearning(map)
-    bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
-    env = Canvas.Canvas(root, map, bot)
     
     s.connect((HOST, PORT))
-    env.redraw()
-    update(s)
-    root.mainloop()
- 
+    print("Socket Connected.")
+    print("Enter # to disconnect....")
+
+    print("start")
+
+    
+
+
+
+env.redraw()
+
+update()
+
+
+print("after mainloop")
