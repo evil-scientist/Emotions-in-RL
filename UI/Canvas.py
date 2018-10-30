@@ -1,7 +1,7 @@
 import tkinter as tk
 
 class Canvas:
-    def __init__(self, root, map, bot, squaresize=100, botsize=20):
+    def __init__(self, root, map, bot, squaresize=50, botsize=10):
         self.map = map
         self.bot = bot
         self.botsize = botsize

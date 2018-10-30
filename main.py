@@ -35,20 +35,28 @@ def update(s):
         beta = call_valence(s)
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
+<<<<<<< HEAD
         #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
         finish_flg = qlearning.onestep(beta) # Learning 1 episode        
+=======
+        d = data
+        #print(type(data))
+        #finish_flg = qlearning.onestep(struct.unpack(">L", data)[0]))  # Taking one step (one action for the bot)
+        finish_flg = qlearning.onestep(int(float(str(data)[2:8]))/10)  # Taking one step (one action for the bot)
+	    #finish_flg = qlearning.onestep(data/50)
+>>>>>>> 4e153b1fa74013b6da6fa15f871abf10fa3a6c15
         STEP_COUNT = STEP_COUNT + 1
 
-    if finish_flg:
+    if finish_flg: #in this case we reached the goal in the last step, so go back to start
         print("Completed one run: " + str(CURRENT_COUNT))
         CURRENT_COUNT = CURRENT_COUNT + 1
         STEP_COUNT = 0
         qlearning.state = map.startTuple()
 
-    bot.update(qlearning.state[0], qlearning.state[1])
-    env.redraw()
+    bot.update(qlearning.state[0], qlearning.state[1]) #update the position of the bot on the UI
+    env.redraw() #redraw the UI with the new state
     if(CURRENT_COUNT < LEARNING_COUNT):
-        root.after(updateperiod, update)
+        root.after(updateperiod, update) #after updateperiod take another step and update the uid again
     else:
         log.close()
 
