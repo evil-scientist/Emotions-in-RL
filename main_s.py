@@ -34,7 +34,8 @@ def call_valence(s,current_count):
 def update(s):
     global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE
     if(CURRENT_COUNT < LEARNING_COUNT):
-        beta = call_valence(s,CURRENT_COUNT)
+        VALENCE = call_valence(s,CURRENT_COUNT)
+        beta = VALENCE
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
         #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
