@@ -85,4 +85,5 @@ if FLAG_social:
         s.connect((HOST, PORT))
         env.redraw()
         update(s)
+        root.mainloop()
 
