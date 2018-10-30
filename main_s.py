@@ -27,9 +27,10 @@ def call_valence(s):
     data = s.recv(1024)#data = decrypt(s.recv(1024))
     a = interp1d([-100,100],[3,6])
     try:
-        print("beta:", float(a(float(str(data)[2:8])))
+        value = float(a(float(str(data)[2:8])))
+        print("beta:", value)
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
-        VALENCE = int(float(str(data)[2:8]))
+        VALENCE = value
         return VALENCE
     except:
         return 3
