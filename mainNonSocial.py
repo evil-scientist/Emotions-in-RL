@@ -30,17 +30,13 @@ log = open(filename, "w+")
 
 print("start")
 
-def update(data):
+def update():
     global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT
     if(CURRENT_COUNT < LEARNING_COUNT):
         beta = 3 + (CURRENT_COUNT / LEARNING_COUNT) * (6 - 3)
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
-        d = data
-        #print(type(data))
         finish_flg = qlearning.onestep(beta)  # Taking one step (one action for the bot)
-        #finish_flg = qlearning.onestep(int(float(str(data)[2:8]))/10)  # Taking one step (one action for the bot)
-	    #finish_flg = qlearning.onestep(data/50)
         STEP_COUNT = STEP_COUNT + 1
 
     if finish_flg: #in this case we reached the goal in the last step, so go back to start
@@ -57,40 +53,14 @@ def update(data):
         log.close()
 
 
+root = tk.Tk()
+map = Map.Map()
+map.parse("testmap.txt")
+qlearning = qlearning.QLearning(map)
+bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
+env = Canvas.Canvas(root, map, bot)
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    root = tk.Tk()
-    map = Map.Map()
-    map.parse("testmap.txt")
-    qlearning = qlearning.QLearning(map)
-    bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
-    env = Canvas.Canvas(root, map, bot)
-    print("after init of own")
-
-    print("after init of qlearning")
-
-    env.redraw()
-    print("before sleep")
-        #time.sleep(updateperiod/1000)
-    print("after sleep")
-    s.connect((HOST, PORT))
-    print("Socket Connected.")
-    print("Enter # to disconnect....")
-    while (1):
-#        print("Client:")
-        #d = str.encode(input())
-        # #s.sendall(d)#s.sendall(encrypt(d))
-#        #  check_exit(d)
-        data = s.recv(1024)#data = decrypt(s.recv(1024))
-        try:
-            print("Server:", int(float(str(data)[2:8])))
-#./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
-            update(data)
-        except:continue
-        
-
-
-		#check_exit(data)
+env.redraw()
 
 update()
 root.mainloop()
