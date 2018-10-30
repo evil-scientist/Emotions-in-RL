@@ -19,6 +19,7 @@ updateperiod = 350
 LEARNING_COUNT = 50
 CURRENT_COUNT = 0
 STEP_COUNT = 0
+FLAG_social = false
 
 def call_valence(s):
     data = s.recv(1024)#data = decrypt(s.recv(1024))
@@ -35,38 +36,58 @@ def update(s):
         beta = call_valence(s)
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
-<<<<<<< HEAD
         #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
         finish_flg = qlearning.onestep(beta) # Learning 1 episode        
-=======
-        d = data
-        #print(type(data))
-        #finish_flg = qlearning.onestep(struct.unpack(">L", data)[0]))  # Taking one step (one action for the bot)
-        finish_flg = qlearning.onestep(int(float(str(data)[2:8]))/10)  # Taking one step (one action for the bot)
-	    #finish_flg = qlearning.onestep(data/50)
->>>>>>> 4e153b1fa74013b6da6fa15f871abf10fa3a6c15
         STEP_COUNT = STEP_COUNT + 1
 
-    if finish_flg: #in this case we reached the goal in the last step, so go back to start
+    if finish_flg:
         print("Completed one run: " + str(CURRENT_COUNT))
         CURRENT_COUNT = CURRENT_COUNT + 1
         STEP_COUNT = 0
         qlearning.state = map.startTuple()
 
-    bot.update(qlearning.state[0], qlearning.state[1]) #update the position of the bot on the UI
-    env.redraw() #redraw the UI with the new state
+    bot.update(qlearning.state[0], qlearning.state[1])
+    env.redraw()
     if(CURRENT_COUNT < LEARNING_COUNT):
-        root.after(updateperiod, update) #after updateperiod take another step and update the uid again
+        root.after(updateperiod, update)
     else:
         log.close()
 
+def update():
+    global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT
+    if(CURRENT_COUNT < LEARNING_COUNT):
+        beta = 3 + (CURRENT_COUNT/LEARNING_COUNT)*3
+        towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
+        log.write(towrite)
+        #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
+        finish_flg = qlearning.onestep(beta) # Learning 1 episode        
+        STEP_COUNT = STEP_COUNT + 1
+
+    if finish_flg:
+        print("Completed one run: " + str(CURRENT_COUNT))
+        CURRENT_COUNT = CURRENT_COUNT + 1
+        STEP_COUNT = 0
+        qlearning.state = map.startTuple()
+
+    bot.update(qlearning.state[0], qlearning.state[1])
+    env.redraw()
+    if(CURRENT_COUNT < LEARNING_COUNT):
+        root.after(updateperiod, update)
+    else:
+        log.close()
+
+if FLAG_social:
+    flag = 'social'
+else:
+    flag = 'normal'
+
 if(not os.path.isdir("./logs/")):
     os.mkdir("./logs/")
-filename = "./logs/log1.txt"
+filename = "./logs/"+flag+"/log1.txt"
 i = 1
 while(os.path.isfile(filename)):
     i = i + 1
-    filename = "./logs/log" + str(i) + ".txt"
+    filename =  "./logs/"+flag+"/log" + str(i) + ".txt"
 log = open(filename, "w+")
 
 root = tk.Tk()
@@ -80,26 +101,14 @@ print("after init of qlearning")
 
 
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
-
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    if(not os.path.isdir("./logs/")):
-        os.mkdir("./logs/")
-    filename = "./logs/log1.txt"
-    i = 1
-    while(os.path.isfile(filename)):
-        i = i + 1
-        filename = "./logs/log" + str(i) + ".txt"
-    log = open(filename, "w+")
-
-    root = tk.Tk()
-    map = Map.Map()
-    map.parse("testmap.txt")
-    qlearning = qlearning.QLearning(map)
-    bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
-    env = Canvas.Canvas(root, map, bot)
-    
-    s.connect((HOST, PORT))
+if FLAG_social:
     env.redraw()
-    update(s)
-    root.mainloop()
+    update()
+else:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        
+        s.connect((HOST, PORT))
+        env.redraw()
+        update(s)
+        root.mainloop()
  
