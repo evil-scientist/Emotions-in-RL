@@ -52,6 +52,13 @@ class Map:
     def tileAt(self, x, y):
         return self.tiles[y][x]
 
+    def isTile(self, x, y):
+        if y < len(self.tiles):
+            if x < len(self.tiles[y]):
+                return True
+
+        return False
+
     def startTuple(self):
         for y, row in enumerate(self.tiles):
             for x, tile in enumerate(row):
@@ -73,8 +80,9 @@ class Map:
         around_map = [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
         actions = []
         for point in around_map:
-            if self.tileAt(point[0], point[1]).isAccessible():
-                actions.append(point)
+            if self.isTile(point[0], point[1]):
+                if self.tileAt(point[0], point[1]).isAccessible():
+                    actions.append(point)
 
         return actions
 
