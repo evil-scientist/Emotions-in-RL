@@ -16,16 +16,16 @@ PORT = 4000
 updateperiod = 350
 
 
-LEARNING_COUNT = 50
+LEARNING_COUNT = 10
 CURRENT_COUNT = 0
 STEP_COUNT = 0
 if(not os.path.isdir("./logs/")):
     os.mkdir("./logs/")
-filename = "./logs/log1.txt"
+filename = "./logs/log_nonsocial1.txt"
 i = 1
 while(os.path.isfile(filename)):
     i = i + 1
-    filename = "./logs/log" + str(i) + ".txt"
+    filename = "./logs/log_nonsocial" + str(i) + ".txt"
 log = open(filename, "w+")
 
 print("start")
