@@ -101,7 +101,7 @@ print("after init of qlearning")
 
 
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
-if FLAG_social
+if FLAG_social:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
         env.redraw()
