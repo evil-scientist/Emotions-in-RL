@@ -29,15 +29,15 @@ log = open(filename, "w+")
 
 print("start")
 
-def update():
+def update(data):
     global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT
     if(CURRENT_COUNT < LEARNING_COUNT):
         beta = 3 + (CURRENT_COUNT / LEARNING_COUNT) * (6 - 3)
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
-        #d = data[:2]
+        d = data
         #print(d)
-        finish_flg = qlearning.onestep(beta)  # Learning 1 episode
+        finish_flg = qlearning.onestep(data)  # Learning 1 episode
         #finish_flg = qlearning.onestep(data/50)  # Learning 1 episode
         STEP_COUNT = STEP_COUNT + 1
 
@@ -72,18 +72,19 @@ print("after sleep")
 
 
 
-#with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-#    s.connect((HOST, PORT))
-#    print("Socket Connected.")
-#    print("Enter # to disconnect....")
-#    while (1):
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect((HOST, PORT))
+    print("Socket Connected.")
+    print("Enter # to disconnect....")
+    while (1):
 #        print("Client:")
-#        #d = str.encode(input())
-#        # #s.sendall(d)#s.sendall(encrypt(d))
+        #d = str.encode(input())
+        # #s.sendall(d)#s.sendall(encrypt(d))
 #        #  check_exit(d)
-#        data = s.recv(1024)#data = decrypt(s.recv(1024))
-##        update(data)
- #       print("Server:", data)
+        data = s.recv(1024)#data = decrypt(s.recv(1024))
+        print("Server:", data)
+        update(data)
+
 
 		#check_exit(data)
 
