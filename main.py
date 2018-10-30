@@ -5,6 +5,7 @@ import tkinter as tk
 import q_learning_grid as qlearning
 import os.path
 import time
+import struct
 import socket
 #from util import check_exit, encrypt, decrypt
 import sys
@@ -36,9 +37,10 @@ def update(data):
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
         d = data
-        #print(d)
-        finish_flg = qlearning.onestep(data)  # Learning 1 episode
-        #finish_flg = qlearning.onestep(data/50)  # Learning 1 episode
+        print(type(data))
+        #finish_flg = qlearning.onestep(struct.unpack(">L", data)[0]))  # Learning 1 episode
+        finish_flg = qlearning.onestep(int(float(str(data)[2:8]))/10)  # Learning 1 episode        
+	#finish_flg = qlearning.onestep(data/50)  # Learning 1 episode
         STEP_COUNT = STEP_COUNT + 1
 
     if finish_flg:
@@ -55,24 +57,22 @@ def update(data):
         log.close()
 
 
-root = tk.Tk()
-map = Map.Map()
-map.parse("testmap.txt")
-qlearning = qlearning.QLearning(map)
-bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
-env = Canvas.Canvas(root, map, bot)
-print("after init of own")
-
-print("after init of qlearning")
-
-env.redraw()
-print("before sleep")
-#time.sleep(updateperiod/1000)
-print("after sleep")
-
-
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    root = tk.Tk()
+    map = Map.Map()
+    map.parse("testmap.txt")
+    qlearning = qlearning.QLearning(map)
+    bot = Bot.Bot(qlearning.state[0],qlearning.state[1])
+    env = Canvas.Canvas(root, map, bot)
+    print("after init of own")
+
+    print("after init of qlearning")
+
+    env.redraw()
+    print("before sleep")
+        #time.sleep(updateperiod/1000)
+    print("after sleep")
     s.connect((HOST, PORT))
     print("Socket Connected.")
     print("Enter # to disconnect....")
@@ -82,8 +82,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         # #s.sendall(d)#s.sendall(encrypt(d))
 #        #  check_exit(d)
         data = s.recv(1024)#data = decrypt(s.recv(1024))
-        print("Server:", data)
-        update(data)
+        try:
+            print("Server:", int(float(str(data)[2:8])))
+#./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
+            update(data)
+        except:continue
+        
 
 
 		#check_exit(data)
