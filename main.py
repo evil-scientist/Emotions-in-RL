@@ -21,37 +21,6 @@ CURRENT_COUNT = 0
 STEP_COUNT = 0
 FLAG_social = False
 
-def call_valence(s):
-    data = s.recv(1024)#data = decrypt(s.recv(1024))
-    try:
-        print("Server:", int(float(str(data)[2:8])))
-#./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
-        VALENCE = int(float(str(data)[2:8]))
-        return VALENCE
-    except:return 3
-
-def update(s):
-    global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE
-    if(CURRENT_COUNT < LEARNING_COUNT):
-        beta = call_valence(s)
-        towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
-        log.write(towrite)
-        #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
-        finish_flg = qlearning.onestep(beta) # Learning 1 episode        
-        STEP_COUNT = STEP_COUNT + 1
-
-    if finish_flg:
-        print("Completed one run: " + str(CURRENT_COUNT))
-        CURRENT_COUNT = CURRENT_COUNT + 1
-        STEP_COUNT = 0
-        qlearning.state = map.startTuple()
-
-    bot.update(qlearning.state[0], qlearning.state[1])
-    env.redraw()
-    if(CURRENT_COUNT < LEARNING_COUNT):
-        root.after(updateperiod, update)
-    else:
-        log.close()
 
 def update():
     global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT
@@ -110,3 +79,4 @@ if FLAG_social:
 else:
     env.redraw()
     update()
+    root.mainloop()

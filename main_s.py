@@ -19,6 +19,7 @@ updateperiod = 350
 LEARNING_COUNT = 50
 CURRENT_COUNT = 0
 STEP_COUNT = 0
+FLAG_social = True
 
 def call_valence(s):
     data = s.recv(1024)#data = decrypt(s.recv(1024))
@@ -27,17 +28,16 @@ def call_valence(s):
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
         VALENCE = int(float(str(data)[2:8]))
         return VALENCE
-    except:return 0
+    except:return 3
 
-def update():
+def update(s):
     global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE
     if(CURRENT_COUNT < LEARNING_COUNT):
-        beta = 3 + (CURRENT_COUNT / LEARNING_COUNT) * (6 - 3)
+        beta = call_valence(s)
         towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
         log.write(towrite)
-        # Learning 1 episode
         #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
-	#finish_flg = qlearning.onestep(data/50)  # Learning 1 episode
+        finish_flg = qlearning.onestep(beta) # Learning 1 episode        
         STEP_COUNT = STEP_COUNT + 1
 
     if finish_flg:
@@ -53,15 +53,19 @@ def update():
     else:
         log.close()
 
-if(not os.path.isdir("./logs/")):
-    os.mkdir("./logs/")
-filename = "./logs/log1.txt"
+if FLAG_social:
+    flag = 'social'
+else:
+    flag = 'normal'
+
+if(not os.path.isdir("./logs/"+flag)):
+    os.mkdir("./logs/"+flag)
+filename = "./logs/"+flag+"/log1.txt"
 i = 1
 while(os.path.isfile(filename)):
     i = i + 1
-    filename = "./logs/log" + str(i) + ".txt"
+    filename =  "./logs/"+flag+"/log" + str(i) + ".txt"
 log = open(filename, "w+")
-
 
 root = tk.Tk()
 map = Map.Map()
@@ -72,24 +76,11 @@ env = Canvas.Canvas(root, map, bot)
 print("after init of own")
 print("after init of qlearning")
 
+
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
+if FLAG_social:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))
+        env.redraw()
+        update(s)
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-
-    
-    s.connect((HOST, PORT))
-    print("Socket Connected.")
-    print("Enter # to disconnect....")
-
-    print("start")
-
-    
-
-
-
-env.redraw()
-
-update()
-
-
-print("after mainloop")
