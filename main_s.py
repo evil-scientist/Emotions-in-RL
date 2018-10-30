@@ -24,11 +24,12 @@ FLAG_social = True
 def call_valence(s):
     data = s.recv(1024)#data = decrypt(s.recv(1024))
     try:
-        print("Server:", int(float(str(data)[2:8])))
+        print("Server:", int(float(str(data)[2:8]))/200*3+1)
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
         VALENCE = int(float(str(data)[2:8]))
         return VALENCE
-    except:return 3
+    except:
+        return 3
 
 def update(s):
     global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE
