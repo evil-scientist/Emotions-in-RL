@@ -12,7 +12,7 @@ class Tile:
     def color(self):
         return "red"
 
-    def reward(self):
+    def getReward(self):
         return 0.0
 
     def __str__(self):
@@ -22,7 +22,7 @@ class EmptyTile(Tile):
     def isAccessible(self):
         return True
 
-    def color(self):
+    def getColor(self):
         return "green"
 
     def __str__(self):
@@ -31,7 +31,7 @@ class EmptyTile(Tile):
 
 class Wall(Tile):
 
-    def color(self):
+    def getColor(self):
         return "black"
 
     def __str__(self):
@@ -44,19 +44,23 @@ class StartTile(EmptyTile):
     def __str__(self):
         return "S"
 
-    def color(self):
+    def getColor(self):
         return "purple"
 
 
 class EndTile(EmptyTile):
+    def __init__(self, reward=5, color="yellow"):
+        self.reward = reward
+        self.color = color
+
     def isEndPoint(self):
         return True
 
-    def color(self):
-        return "yellow"
+    def getColor(self):
+        return self.color
 
-    def reward(self):
-        return 100.0
+    def getReward(self):
+        return self.reward
 
     def __str__(self):
         return "R"

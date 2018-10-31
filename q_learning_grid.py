@@ -5,6 +5,7 @@ import sys
 import copy
 import random
 import math
+from numpy.random import choice
 
 # "S": Start, "#": wall, "number": reward
 RAW_Field = """
@@ -121,13 +122,13 @@ class QLearning(object):
                 #       Q(s, a) <- Q(s, a) + alpha * {r(s, a) + gamma max{Q(s`, a`)} -  Q(s,a)}
                 Q_s_a = self.get_Qvalue(state, action)
                 mQ_s_a = max([self.get_Qvalue(action, n_action) for n_action in self.map.getPossibleActions(action)])
-                r_s_a = self.map.tileAt(action[0], action[1]).reward()
+                r_s_a = self.map.tileAt(action[0], action[1]).getReward()
                 finish_flg = self.map.tileAt(action[0], action[1]).isEndPoint()
                 # calculate
                 q_value = Q_s_a + ALPHA * ( r_s_a +  GAMMA * mQ_s_a - Q_s_a)
                 # update
                 self.set_Qvalue(state, action, q_value)
-                return finish_flg
+                return finish_flg, r_s_a
 
 
         def get_Qvalue(self, state, action):
@@ -161,24 +162,29 @@ class QLearning(object):
         #         return random.choice(best_actions)
 
         def choose_action_trade_off(self, state,beta):
-                best_actions = []
+                action_dict = {}
                 max_q_value = -1
                 pro_sum = 0
 
                 for s in self.map.getPossibleActions(state):
                     q_value = self.get_Qvalue(state, s)
-                    pro_sum = pro_sum + math.exp(q_value)
+                    pro_sum = pro_sum + math.exp(beta*q_value)
 
                 max_pro = 0
                 for a in self.map.getPossibleActions(state):
                         q_value = self.get_Qvalue(state, a)
                         softmax = math.exp(beta * q_value) / pro_sum
-                        if softmax > max_pro:
-                                best_actions = [a,]
-                                max_pro = softmax
-                        elif softmax == max_pro:
-                                best_actions.append(a)
-                return random.choice(best_actions)
+                        action_dict[str(a)] = softmax
+                actions = list(action_dict.keys())
+                probability = []
+                for action in actions:
+                        probability.append(action_dict[action])
+                #print("actions: " + str(actions))
+                if len(actions) == 1:
+                        chosen_action = eval(actions[0])
+                else:
+                        chosen_action = eval(choice(actions,p=probability))
+                return chosen_action
 
         def dump_Qvalue(self):
                 print("##### Dump Qvalue #####")

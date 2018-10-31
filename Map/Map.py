@@ -28,8 +28,10 @@ class Map:
                     currentrow.append(Tile.Wall())
                 elif char == "O":
                     currentrow.append(Tile.EmptyTile())
-                elif char == "R":
+                elif char == "G":
                     currentrow.append(Tile.EndTile())
+                elif char == "R":
+                    currentrow.append(Tile.EndTile(reward=1, color="blue"))
                 elif char == "S":
                     currentrow.append(Tile.StartTile())
                 elif char == "\n":

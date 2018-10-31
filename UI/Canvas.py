@@ -12,7 +12,7 @@ class Canvas:
             for y in range(self.map.height()):
                 xcanvas = x*squaresize
                 ycanvas = y*squaresize
-                color = map.tileAt(x,y).color()
+                color = map.tileAt(x,y).getColor()
                 self.canvas.create_rectangle(xcanvas, ycanvas, xcanvas + squaresize, ycanvas + squaresize, fill = color, outline=color)
 
         xcanvasbot = bot.x*squaresize + (squaresize - botsize)/2
