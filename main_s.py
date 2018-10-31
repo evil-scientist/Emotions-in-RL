@@ -35,29 +35,31 @@ def call_valence(s):
     except:
         return 3
 
+
+
 def update():
-    global LEARNING_COUNT, CURRENT_COUNT, STEP_COUNT,VALENCE,s
-    if(CURRENT_COUNT < LEARNING_COUNT):
+    global TOTAL_STEPS, STEP_COUNT, CURRENT_COUNT, EXP_LEARNING_COUNT, TOTAL_REWARD
+    if(STEP_COUNT < TOTAL_STEPS):
         VALENCE = call_valence(s)
         beta = VALENCE
-        towrite = str(CURRENT_COUNT) + ", " + str(STEP_COUNT) + ", " + str(beta) + "\n"
+        finish_flg, reward = qlearning.onestep(beta) # Learning 1 episode
+        TOTAL_REWARD = TOTAL_REWARD + reward
+        towrite = str(STEP_COUNT) + ", " + str(CURRENT_COUNT) + ", " + str(beta) + ", " + str(TOTAL_REWARD) + "\n"
         log.write(towrite)
-        #finish_flg = qlearning.onestep(call_valence(s))  # Learning 1 episode        
-        finish_flg = qlearning.onestep(beta) # Learning 1 episode        
         STEP_COUNT = STEP_COUNT + 1
 
     if finish_flg:
         print("Completed one run: " + str(CURRENT_COUNT))
         CURRENT_COUNT = CURRENT_COUNT + 1
-        STEP_COUNT = 0
         qlearning.state = map.startTuple()
 
     bot.update(qlearning.state[0], qlearning.state[1])
     env.redraw()
-    if(CURRENT_COUNT < LEARNING_COUNT):
+    if(STEP_COUNT < TOTAL_STEPS):
         root.after(updateperiod, update)
     else:
         log.close()
+
 
 if FLAG_social:
     flag = 'social'

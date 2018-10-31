@@ -30,7 +30,6 @@ def update():
         finish_flg, reward = qlearning.onestep(beta) # Learning 1 episode
         TOTAL_REWARD = TOTAL_REWARD + reward
         towrite = str(STEP_COUNT) + ", " + str(CURRENT_COUNT) + ", " + str(beta) + ", " + str(TOTAL_REWARD) + "\n"
-        print(towrite)
         log.write(towrite)
         STEP_COUNT = STEP_COUNT + 1
 
