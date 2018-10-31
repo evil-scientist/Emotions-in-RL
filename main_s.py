@@ -23,6 +23,7 @@ EXP_LEARNING_COUNT = 10
 TOTAL_STEPS = 400
 TOTAL_REWARD = 0
 FLAG_social = False
+KEY_PRESSED = False
 
 def call_valence(s):
 
@@ -40,27 +41,30 @@ def call_valence(s):
 
 
 def update():
-    global TOTAL_STEPS, STEP_COUNT, CURRENT_COUNT, EXP_LEARNING_COUNT, TOTAL_REWARD
-    if(STEP_COUNT < TOTAL_STEPS):
-        VALENCE = call_valence(s)
-        beta = VALENCE
-        finish_flg, reward = qlearning.onestep(beta) # Learning 1 episode
-        TOTAL_REWARD = TOTAL_REWARD + reward
-        towrite = str(STEP_COUNT) + ", " + str(CURRENT_COUNT) + ", " + str(beta) + ", " + str(TOTAL_REWARD) + "\n"
-        log.write(towrite)
-        STEP_COUNT = STEP_COUNT + 1
+    global TOTAL_STEPS, STEP_COUNT, CURRENT_COUNT, EXP_LEARNING_COUNT, TOTAL_REWARD, KEY_PRESSED
+    if KEY_PRESSED:
+        if(STEP_COUNT < TOTAL_STEPS):
+            VALENCE = call_valence(s)
+            beta = VALENCE
+            finish_flg, reward = qlearning.onestep(beta) # Learning 1 episode
+            TOTAL_REWARD = TOTAL_REWARD + reward
+            towrite = str(STEP_COUNT) + ", " + str(CURRENT_COUNT) + ", " + str(beta) + ", " + str(TOTAL_REWARD) + "\n"
+            log.write(towrite)
+            STEP_COUNT = STEP_COUNT + 1
 
-    if finish_flg:
-        print("Completed one run: " + str(CURRENT_COUNT))
-        CURRENT_COUNT = CURRENT_COUNT + 1
-        qlearning.state = map.startTuple()
+        if finish_flg:
+            print("Completed one run: " + str(CURRENT_COUNT))
+            CURRENT_COUNT = CURRENT_COUNT + 1
+            qlearning.state = map.startTuple()
 
-    bot.update(qlearning.state[0], qlearning.state[1])
-    env.redraw()
-    if(STEP_COUNT < TOTAL_STEPS):
-        root.after(updateperiod, update)
+        bot.update(qlearning.state[0], qlearning.state[1])
+        env.redraw()
+        if(STEP_COUNT < TOTAL_STEPS):
+            root.after(updateperiod, update)
+        else:
+            log.close()
     else:
-        log.close()
+        root.after(updateperiod, update)
 
 
 if FLAG_social:
@@ -77,8 +81,13 @@ while(os.path.isfile(filename)):
     filename =  "./logs/"+flag+"/log" + str(i) + ".txt"
 log = open(filename, "w+")
 
+def key(event):
+    global KEY_PRESSED
+    KEY_PRESSED = True
+
 root = tk.Tk()
 root.attributes("-fullscreen", True)
+root.bind("<Key>", key)
 map = Map.Map()
 map.parse("testmap.txt")
 qlearning = qlearning.QLearning(map)
