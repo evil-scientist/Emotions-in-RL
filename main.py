@@ -60,6 +60,7 @@ while(os.path.isfile(filename)):
 log = open(filename, "w+")
 
 root = tk.Tk()
+root.attributes("-fullscreen", True)
 map = Map.Map()
 map.parse("testmap.txt")
 qlearning = qlearning.QLearning(map)

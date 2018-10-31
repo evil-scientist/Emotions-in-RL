@@ -14,13 +14,15 @@ from scipy.interpolate import interp1d
 
 HOST = '0.0.0.0'
 PORT = 4000
-updateperiod = 500
+updateperiod = 750
 
 
-LEARNING_COUNT = 50
-CURRENT_COUNT = 0
 STEP_COUNT = 0
-FLAG_social = True
+CURRENT_COUNT = 0
+EXP_LEARNING_COUNT = 10
+TOTAL_STEPS = 400
+TOTAL_REWARD = 0
+FLAG_social = False
 
 def call_valence(s):
 
@@ -76,6 +78,7 @@ while(os.path.isfile(filename)):
 log = open(filename, "w+")
 
 root = tk.Tk()
+root.attributes("-fullscreen", True)
 map = Map.Map()
 map.parse("testmap.txt")
 qlearning = qlearning.QLearning(map)
