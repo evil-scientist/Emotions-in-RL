@@ -42,7 +42,7 @@ def call_valence(s):
         a = interp1d([-50,50],[12,3])
 #       FLAG_12_3 = True
 #+ valence --> lower beta -- > exploration 
-#        a = interp1d([-50,50],[3,12])
+        #a = interp1d([-50,50],[3,12])
 #       FLAG_12_3 = False
 
         value = float(a(data))
@@ -52,7 +52,7 @@ def call_valence(s):
         return VALENCE
     except:
         print('Couldnt convert')
-        return 4.5
+        call_valence(s)
 '''
     a = interp1d([-100,100],[3,6])
     try:
