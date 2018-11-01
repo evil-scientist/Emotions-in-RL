@@ -43,10 +43,14 @@ map.parse("testmap.txt")
 qlearning = ql.QLearning(map)
 finish_flg = False
 totalreward = 0
-
+sugar_count = 0
+food_count = 0
 while(CURRENT_RUN < TOTAL_RUNS):
     while(STEP_COUNT < TOTAL_STEPS):
-        beta = 3 + (CURRENT_COUNT / EXP_LEARNING_COUNT) * (6 - 3)
+        
+        beta = 3 + min((CURRENT_COUNT / EXP_LEARNING_COUNT),1) * (12-3)
+        
+        #beta = 0.1
         finish_flg, reward = qlearning.onestep(
             beta)  # Taking one step (one action for the bot)
         results[STEP_COUNT].append(totalreward)
@@ -56,8 +60,15 @@ while(CURRENT_RUN < TOTAL_RUNS):
             CURRENT_COUNT = CURRENT_COUNT + 1
             qlearning.state = map.startTuple()
             finish_flg = False
-
-    print("Run: " + str(CURRENT_RUN) + "Total Reward: " + str(totalreward))
+        endgoal = ""
+        if (reward == 10):
+            endgoal = "food"
+            food_count = food_count + 1 
+        elif (reward == 1):
+            endgoal = "sugar"
+            sugar_count = sugar_count + 1
+        if endgoal != "":
+            print("Run: " + str(CURRENT_RUN) + " Total Reward: " + str(totalreward)+" endgoal:"+endgoal + " beta: "+str(beta) + " Number of sugar: "+str(sugar_count) + " Number of food: "+str(food_count) )
     CURRENT_RUN = CURRENT_RUN + 1
     CURRENT_COUNT = 0
     STEP_COUNT = 0

@@ -49,9 +49,10 @@ class StartTile(EmptyTile):
 
 
 class EndTile(EmptyTile):
-    def __init__(self, reward=5, color="yellow"):
+    def __init__(self, reward=10, color="yellow"):
         self.reward = reward
         self.color = color
+        self.flag = True
 
     def isEndPoint(self):
         return True

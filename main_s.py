@@ -28,6 +28,25 @@ KEY_PRESSED = False
 def call_valence(s):
 
     data = s.recv(1024)#data = decrypt(s.recv(1024))
+    try:
+        data = float(str(data)[2:8])
+        print(data)
+        if abs(data) >50:
+            if data>0:
+                data = 50
+            else:
+                data = -50
+        a = interp1d([-50,50],[12,3])
+#+ valence --> higher beta -- > exploitation 
+        value = float(a(data))
+        print("beta:", value)
+#./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
+        VALENCE = value
+        return VALENCE
+    except:
+        print('Couldnt convert')
+        return 4.5
+'''
     a = interp1d([-100,100],[3,6])
     try:
         value = float(a(float(str(data)[2:8])))
@@ -37,7 +56,7 @@ def call_valence(s):
         return VALENCE
     except:
         return 3
-
+'''
 
 
 def update():
@@ -47,8 +66,13 @@ def update():
             VALENCE = call_valence(s)
             beta = VALENCE
             finish_flg, reward = qlearning.onestep(beta) # Learning 1 episode
+            endgoal = ""
+            if (reward == 10):
+                endgoal = "food"
+            elif (reward == 1):
+                endgoal = "sugar"
             TOTAL_REWARD = TOTAL_REWARD + reward
-            towrite = str(STEP_COUNT) + ", " + str(CURRENT_COUNT) + ", " + str(beta) + ", " + str(TOTAL_REWARD) + "\n"
+            towrite = str(STEP_COUNT) + ", " + str(CURRENT_COUNT) + ", " + str(beta) + ", " + str(TOTAL_REWARD) + endgoal+"\n"
             log.write(towrite)
             STEP_COUNT = STEP_COUNT + 1
 
