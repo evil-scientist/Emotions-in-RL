@@ -39,10 +39,10 @@ def call_valence(s):
             else:
                 data = -50
 #+ valence --> higher beta -- > exploitation 
-        #a = interp1d([-50,50],[12,3])
+        a = interp1d([-50,50],[12,3])
 #       FLAG_12_3 = True
 #+ valence --> lower beta -- > exploration 
-        a = interp1d([-50,50],[3,12])
+#        a = interp1d([-50,50],[3,12])
 #       FLAG_12_3 = False
 
         value = float(a(data))
@@ -97,7 +97,7 @@ def update():
     else:
         root.after(updateperiod, update)
 
-FLAG_12_3 = False
+FLAG_12_3 = True
 
 if(not os.path.isdir("./logs/social/")):
     os.mkdir("./logs/social/")
