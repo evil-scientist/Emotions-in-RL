@@ -25,6 +25,8 @@ TOTAL_REWARD = 0
 FLAG_social = False
 KEY_PRESSED = False
 
+global FLAG_12_3 
+
 def call_valence(s):
 
     data = s.recv(1024)#data = decrypt(s.recv(1024))
@@ -36,8 +38,13 @@ def call_valence(s):
                 data = 50
             else:
                 data = -50
-        a = interp1d([-50,50],[12,3])
 #+ valence --> higher beta -- > exploitation 
+        #a = interp1d([-50,50],[12,3])
+#       FLAG_12_3 = True
+#+ valence --> lower beta -- > exploration 
+        a = interp1d([-50,50],[3,12])
+#       FLAG_12_3 = False
+
         value = float(a(data))
         print("beta:", value)
 #./opencv-webcam-demo/opencv-webcam-demo -d /opt/affdex-sdk/data
@@ -90,20 +97,30 @@ def update():
     else:
         root.after(updateperiod, update)
 
+FLAG_12_3 = False
 
-if FLAG_social:
-    flag = 'social'
+if(not os.path.isdir("./logs/social/")):
+    os.mkdir("./logs/social/")
+# CASE 1
+#+ valence --> higher beta -- > exploitation 
+#       a = interp1d([-50,50],[12,3])
+if FLAG_12_3:
+    filename = "./logs/social/"+"/social_12-3_log1.txt"
+    i = 1
+    while(os.path.isfile(filename)):
+        i = i + 1
+        filename =  "./logs/social"+"/social_12-3_log" + str(i) + ".txt"
+    log = open(filename, "w+")
+# CASE 2
+#+ valence --> lower beta -- > exploration 
+#       a = interp1d([-50,50],[3,12])
 else:
-    flag = 'normal'
-
-if(not os.path.isdir("./logs/"+flag)):
-    os.mkdir("./logs/"+flag)
-filename = "./logs/"+flag+"/log1.txt"
-i = 1
-while(os.path.isfile(filename)):
-    i = i + 1
-    filename =  "./logs/"+flag+"/log" + str(i) + ".txt"
-log = open(filename, "w+")
+    filename = "./logs/social/"+"/social_3-12_log1.txt"
+    i = 1
+    while(os.path.isfile(filename)):
+        i = i + 1
+        filename =  "./logs/social"+"/social_3-12_log" + str(i) + ".txt"
+    log = open(filename, "w+")
 
 def key(event):
     global KEY_PRESSED
