@@ -52,7 +52,7 @@ def call_valence(s):
         return VALENCE
     except:
         print('Couldnt convert')
-        return -777
+        return 4.5
 '''
     a = interp1d([-100,100],[3,6])
     try:
@@ -71,8 +71,6 @@ def update():
     if KEY_PRESSED:
         if(STEP_COUNT < TOTAL_STEPS):
             VALENCE = call_valence(s)
-            while (VALENCE != -777):
-                VALENCE = call_valence(s)
             beta = VALENCE
             finish_flg, reward = qlearning.onestep(beta) # Learning 1 episode
             endgoal = ""
