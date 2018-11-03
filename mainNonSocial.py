@@ -26,8 +26,11 @@ CURRENT_RUN = 0
 CURRENT_COUNT = 0
 
 results = {}
+results_beta = {}
 for i in range(TOTAL_STEPS):
     results[i] = []
+    results_beta[i] = []
+
 
 if(not os.path.isdir("./logs/")):
     os.mkdir("./logs/")
@@ -54,6 +57,8 @@ while(CURRENT_RUN < TOTAL_RUNS):
         finish_flg, reward = qlearning.onestep(
             beta)  # Taking one step (one action for the bot)
         results[STEP_COUNT].append(totalreward)
+        results_beta[STEP_COUNT].append(beta)
+        
         totalreward = totalreward + reward
         STEP_COUNT = STEP_COUNT + 1
         if(finish_flg):
@@ -76,7 +81,7 @@ while(CURRENT_RUN < TOTAL_RUNS):
     qlearning = ql.QLearning(map)
 
 for step in results.keys():
-    towrite = (str(step) + str(", {0}") +  str("\n")).format(mean(results[step]))
+    towrite = (str(step) + str(", {0}, {1}") +  str("\n")).format(mean(results[step]),mean(results_beta[step]))
     log.write(towrite)
 
 log.close()
